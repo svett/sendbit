@@ -4,16 +4,17 @@ import (
 	"encoding/json"
 	"errors"
 	"net/url"
+	"strings"
 )
 
 // Determines whether a recipient already exist error
 func IsRecipientExist(err error) bool {
-	return err.Error() == "The recipient already exist."
+	return strings.HasSuffix(err.Error(), "The recipient already exist.")
 }
 
 // Determines whether a recipient doest not exist error
 func IsRecipientNotExist(err error) bool {
-	return err.Error() == "The recipient does not exist."
+	return strings.HasSuffix(err.Error(), "The recipient does not exist.")
 }
 
 // An email recipient subscribed to particular recipient list

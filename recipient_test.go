@@ -156,7 +156,7 @@ var _ = Describe("Recipient", func() {
 		It("fails to delete it", func() {
 			Expect(client.DeleteRecipient(list, "no.exists@example.com")).To(
 				MatchError("sendbit: client.DeleteRecipient error: " +
-					"The recipient is not removed."))
+					"The recipient doest not exist."))
 		})
 	})
 
@@ -164,6 +164,14 @@ var _ = Describe("Recipient", func() {
 		Context("when is not RecipientExist error", func() {
 			It("returns false", func() {
 				Expect(IsRecipientExist(errors.New("EOF"))).To(Equal(false))
+			})
+		})
+
+		Context("when the error is formatted", func() {
+			It("returns true", func() {
+				err := errors.New("sendbit: client.AddRecipient: The recipient " +
+					"already exist.")
+				Expect(IsRecipientExist(err)).To(Equal(true))
 			})
 		})
 
@@ -177,6 +185,14 @@ var _ = Describe("Recipient", func() {
 		Context("when is not RecipientNotExist error", func() {
 			It("returns false", func() {
 				Expect(IsRecipientNotExist(errors.New("EOF"))).To(Equal(false))
+			})
+		})
+
+		Context("when the error is formatted", func() {
+			It("returns true", func() {
+				err := errors.New("sendbit: client.DeleteRecipient: The recipient " +
+					"does not exist.")
+				Expect(IsRecipientNotExist(err)).To(Equal(true))
 			})
 		})
 
