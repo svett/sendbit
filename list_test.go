@@ -3,7 +3,6 @@ package sendbit_test
 import (
 	"errors"
 	"fmt"
-	"os"
 
 	. "github.com/svett/sendbit"
 
@@ -17,12 +16,7 @@ var _ = Describe("List", func() {
 
 	BeforeEach(func() {
 		cleanUp = true
-		user := os.Getenv("SENDGRID_USER")
-		Expect(user).ToNot(BeEmpty())
-		pass := os.Getenv("SENDGRID_PASS")
-		Expect(pass).ToNot(BeEmpty())
-
-		client = NewClient(user, pass)
+		client = NewClientFromEnv()
 	})
 
 	AfterEach(func() {
@@ -45,6 +39,15 @@ var _ = Describe("List", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(list).ToNot(BeNil())
 		Expect(list.Name).To(Equal(name))
+	})
+
+	Context("when duplicated list is created", func() {
+		It("fails to be created", func() {
+			name := RandomString(15)
+			Expect(client.CreateList(name)).To(Succeed())
+			Expect(client.CreateList(name)).To(MatchError(fmt.Errorf("sendbit: "+
+				"client.CreateList error: %s already exists", name)))
+		})
 	})
 
 	Context("when Auth is empty or invalid", func() {

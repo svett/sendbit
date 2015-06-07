@@ -25,7 +25,7 @@ func (client *Client) CreateList(name string) error {
 		return errorf(errors.New("The list name cannot be empty."))
 	}
 
-	data := make(url.Values)
+	data := url.Values{}
 	data.Add("list", name)
 
 	_, err := client.post("/newsletter/lists/add.json", data)
@@ -46,7 +46,7 @@ func (client *Client) DeleteList(name string) error {
 		return errorf(errors.New("The list name cannot be empty."))
 	}
 
-	data := make(url.Values)
+	data := url.Values{}
 	data.Add("list", name)
 	_, err := client.post("/newsletter/lists/delete.json", data)
 	if err != nil {
@@ -66,7 +66,7 @@ func (client *Client) List(name string) (*List, error) {
 		return nil, errorf(errors.New("The list name cannot be empty."))
 	}
 
-	data := make(url.Values)
+	data := url.Values{}
 	data.Add("list", name)
 
 	response, err := client.post("/newsletter/lists/get.json", data)
