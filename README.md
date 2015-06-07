@@ -2,7 +2,7 @@
 
 ## Overview
 SendBit is a Go library for SendGrid REST API
-A client Go library for [SendGrid API](https://sendgrid.com/docs/API_Reference/Marketing_Emails_API/emails.html.
+A client Go library for [SendGrid API](https://sendgrid.com/docs/API_Reference/Marketing_Emails_API/emails.html).
 
 Note that the library is still in development.
 
