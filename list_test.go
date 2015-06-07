@@ -49,6 +49,19 @@ var _ = Describe("List", func() {
 		})
 	})
 
+	FDescribe("IsListNotExist", func() {
+		Context("when is not ListNotExist error", func() {
+			It("returns false", func() {
+				Expect(IsListNotExist(errors.New("EOF"))).To(Equal(false))
+			})
+		})
+
+		It("returns true", func() {
+			err := errors.New("sendbit: client.List error: the title(s) 'mylist' do not exist")
+			Expect(IsListNotExist(err)).To(Equal(true))
+		})
+	})
+
 	Context("when Auth is empty or invalid", func() {
 		BeforeEach(func() {
 			cleanUp = false

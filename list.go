@@ -3,9 +3,17 @@ package sendbit
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/url"
 )
+
+// Determines whether a error is 'NotListExist' error.
+func IsListNotExist(err error) bool {
+	var list string
+	count, err := fmt.Sscanf(err.Error(), "sendbit: client.List error: the title(s) %s do not exist", &list)
+	return list != "" && count == 1 && err == nil
+}
 
 // Represents a Recipient List
 type List struct {
