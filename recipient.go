@@ -6,6 +6,16 @@ import (
 	"net/url"
 )
 
+// Determines whether a recipient already exist error
+func IsRecipientExist(err error) bool {
+	return err.Error() == "The recipient already exist."
+}
+
+// Determines whether a recipient doest not exist error
+func IsRecipientNotExist(err error) bool {
+	return err.Error() == "The recipient does not exist."
+}
+
 // An email recipient subscribed to particular recipient list
 type Recipient struct {
 	// This is a recipient's name
@@ -52,7 +62,7 @@ func (client *Client) AddRecipient(list string, recipient *Recipient) error {
 	}
 
 	if stats.AffectedRows == 0 {
-		return errorf(errors.New("The recipient is not added."))
+		return errorf(errors.New("The recipient already exist."))
 	}
 
 	return nil
@@ -90,7 +100,7 @@ func (client *Client) DeleteRecipient(list, email string) error {
 	}
 
 	if stats.AffectedRows == 0 {
-		return errorf(errors.New("The recipient is not removed."))
+		return errorf(errors.New("The recipient doest not exist."))
 	}
 
 	return nil

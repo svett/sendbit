@@ -159,4 +159,30 @@ var _ = Describe("Recipient", func() {
 					"The recipient is not removed."))
 		})
 	})
+
+	Describe("IsRecipientExist", func() {
+		Context("when is not RecipientExist error", func() {
+			It("returns false", func() {
+				Expect(IsRecipientExist(errors.New("EOF"))).To(Equal(false))
+			})
+		})
+
+		It("returns true", func() {
+			err := errors.New("The recipient already exist.")
+			Expect(IsRecipientExist(err)).To(Equal(true))
+		})
+	})
+
+	Describe("IsRecipientNotExist", func() {
+		Context("when is not RecipientNotExist error", func() {
+			It("returns false", func() {
+				Expect(IsRecipientNotExist(errors.New("EOF"))).To(Equal(false))
+			})
+		})
+
+		It("returns true", func() {
+			err := errors.New("The recipient does not exist.")
+			Expect(IsRecipientNotExist(err)).To(Equal(true))
+		})
+	})
 })

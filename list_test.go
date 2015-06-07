@@ -49,7 +49,7 @@ var _ = Describe("List", func() {
 		})
 	})
 
-	FDescribe("IsListNotExist", func() {
+	Describe("IsListNotExist", func() {
 		Context("when is not ListNotExist error", func() {
 			It("returns false", func() {
 				Expect(IsListNotExist(errors.New("EOF"))).To(Equal(false))
