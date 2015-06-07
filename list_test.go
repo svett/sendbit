@@ -15,8 +15,10 @@ var _ = Describe("List", func() {
 	var cleanUp bool
 
 	BeforeEach(func() {
+		var err error
 		cleanUp = true
-		client = NewClientFromEnv()
+		client, err = NewClientFromEnv()
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
@@ -41,12 +43,9 @@ var _ = Describe("List", func() {
 		Expect(list.Name).To(Equal(name))
 	})
 
-	Context("when duplicated list is created", func() {
+	PContext("when duplicated list is created", func() {
 		It("fails to be created", func() {
-			name := RandomString(15)
-			Expect(client.CreateList(name)).To(Succeed())
-			Expect(client.CreateList(name)).To(MatchError(fmt.Errorf("sendbit: "+
-				"client.CreateList error: %s already exists", name)))
+
 		})
 	})
 

@@ -17,8 +17,9 @@ var _ = Describe("Recipient", func() {
 	const list = "sendbit.tmp.list"
 
 	BeforeEach(func() {
-		nilRecipient = nil
-		client = NewClientFromEnv()
+		var err error
+		client, err = NewClientFromEnv()
+		Expect(err).ToNot(HaveOccurred())
 		Expect(client.CreateList(list)).To(Succeed())
 	})
 

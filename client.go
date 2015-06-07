@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 )
@@ -34,15 +35,30 @@ type Client struct {
 	Auth *Auth
 }
 
+// Creates a new client from Environment variables
+// SENDGRID_USER
+// SENDGRID_PASS
+func NewClientFromEnv() (*Client, error) {
+	user := os.Getenv("SENDGRID_USER")
+	pass := os.Getenv("SENDGRID_PASS")
+	return NewClient(user, pass)
+}
+
 // Creates a new instance of sendbit.Client for
 // concreted SendGrid Account
-func NewClient(username, password string) *Client {
+func NewClient(username, password string) (*Client, error) {
+	if username == "" {
+		return nil, errors.New("sendbit: Username argument cannot be empty.")
+	}
+	if password == "" {
+		return nil, errors.New("sendbit: Password argument cannot be empty.")
+	}
 	return &Client{
 		Auth: &Auth{
 			Username: username,
 			Password: password,
 		},
-	}
+	}, nil
 }
 
 func (client *Client) authenticate(data url.Values) error {
