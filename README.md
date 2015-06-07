@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/svett/sendbit.svg?branch=master)](https://travis-ci.org/svett/sendbit)
+[![Coverage Status](https://coveralls.io/repos/svett/sendbit/badge.svg?branch=master)](https://coveralls.io/r/svett/sendbit?branch=master)
 # SendBit 
 
 ## Overview
