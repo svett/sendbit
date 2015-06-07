@@ -3,12 +3,14 @@ package sendbit
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type Response struct {
@@ -43,33 +45,44 @@ func NewClient(username, password string) *Client {
 	}
 }
 
-func (client *Client) authenticate(data url.Values) (url.Values, error) {
+func (client *Client) authenticate(data url.Values) error {
 	if client.Auth == nil ||
 		client.Auth.Username == "" ||
 		client.Auth.Password == "" {
-		return data, fmt.Errorf("The client credentails are missing or invalid.")
-	}
-
-	if data == nil {
-		data = make(url.Values)
+		return fmt.Errorf("The client credentails are missing or invalid.")
 	}
 
 	data.Add("api_user", client.Auth.Username)
 	data.Add("api_key", client.Auth.Password)
-	return data, nil
+	return nil
 }
 
 func (client *Client) post(path string, data url.Values) (io.Reader, error) {
-	values, err := client.authenticate(data)
-	if err != nil {
+	if data == nil {
+		data = url.Values{}
+	}
+	if err := client.authenticate(data); err != nil {
 		return nil, err
 	}
 
 	path = strings.TrimPrefix(path, "/")
 	path = strings.TrimSuffix(path, "/")
-
 	host := fmt.Sprintf("https://api.sendgrid.com/api/%s", path)
-	response, err := http.PostForm(host, values)
+
+	request, err := http.NewRequest("POST", host, strings.NewReader(data.Encode()))
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Set("User-Agent", "sendbit/0.0.1;go")
+
+	httpClient := &http.Client{
+		Transport: http.DefaultTransport,
+		Timeout:   5 * time.Second,
+	}
+
+	response, err := httpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -81,14 +94,8 @@ func (client *Client) post(path string, data url.Values) (io.Reader, error) {
 	}
 
 	var message Response
-	if err := json.Unmarshal(body, &message); err == nil {
-		if message.Error != "" {
-			return nil, fmt.Errorf("%s", message.Error)
-		}
-
-		if message.Message != "success" {
-			return nil, fmt.Errorf("Non success message: %s", message.Message)
-		}
+	if err := json.Unmarshal(body, &message); err == nil && message.Error != "" {
+		return nil, errors.New(message.Error)
 	}
 
 	if response.StatusCode != http.StatusOK {
